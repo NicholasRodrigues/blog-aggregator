@@ -1,5 +1,7 @@
 package main
 
+import _ "github.com/lib/pq"
+
 import (
 	"github.com/NicholasRodrigues/blog-aggregator/internal/http"
 	"github.com/joho/godotenv"

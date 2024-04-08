@@ -2,26 +2,20 @@ package http
 
 import (
 	"fmt"
-	"github.com/NicholasRodrigues/blog-aggregator/internal/handlers"
 	"github.com/NicholasRodrigues/blog-aggregator/internal/middlewares"
+	"github.com/NicholasRodrigues/blog-aggregator/internal/routes"
 	"net/http"
 	"os"
 )
 
 func StartServer() {
 	port := os.Getenv("PORT")
+
 	if port == "" {
 		port = "8080"
 	}
-	const filepathRoot = "."
 
-	mux := http.NewServeMux()
-	fsHandler := http.StripPrefix("/v1", http.FileServer(http.Dir(filepathRoot)))
-	mux.Handle("/v1/", fsHandler)
-
-	mux.HandleFunc("GET /v1/readiness", handlers.HandlerReadiness)
-	mux.HandleFunc("GET /v1/err", handlers.HandlerErr)
-
+	mux := routes.SetRoutes()
 	corsMux := middlewares.MiddlewareCors(mux)
 
 	server := &http.Server{
