@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/NicholasRodrigues/blog-aggregator/internal/auth"
 	"github.com/NicholasRodrigues/blog-aggregator/internal/database"
 	"github.com/NicholasRodrigues/blog-aggregator/pkg/jsonutil"
 	"github.com/google/uuid"
@@ -30,7 +31,7 @@ func (apiCfg *ApiConfig) HandlerCreateUser(w http.ResponseWriter, r *http.Reques
 		ID:        userUuid,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		Name:      "Nicholas Rodrigues",
+		Name:      params.Name,
 	}
 	userResponse, err := apiCfg.DB.CreateUser(r.Context(), database.CreateUserParams(user))
 
@@ -40,4 +41,24 @@ func (apiCfg *ApiConfig) HandlerCreateUser(w http.ResponseWriter, r *http.Reques
 	}
 
 	jsonutil.RespondWithJSON(w, http.StatusCreated, userResponse)
+}
+
+func (apiCfg *ApiConfig) HandlerGetUserByApiKey(w http.ResponseWriter, r *http.Request) {
+	apiKey, err := auth.GetApiKey(r.Header)
+	if err != nil {
+		jsonutil.RespondWithError(w, err, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+	if apiKey == "" {
+		jsonutil.RespondWithError(w, nil, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	userResponse, err := apiCfg.DB.GetUserByApiKey(r.Context(), apiKey)
+	if err != nil {
+		jsonutil.RespondWithError(w, err, http.StatusNotFound, "User not found")
+		return
+	}
+
+	jsonutil.RespondWithJSON(w, http.StatusOK, userResponse)
 }

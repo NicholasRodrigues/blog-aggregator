@@ -1,0 +1,2 @@
+(base) nicholas@nicholas-System-Product-Name:~$ export PATH=$PATH:$(go env GOPATH)/bin
+(base) nicholas@nicholas-System-Product-Name:~$ export PATH=$PATH:$HOME/go/bin

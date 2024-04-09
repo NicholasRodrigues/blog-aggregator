@@ -32,6 +32,7 @@ func SetRoutes() *http.ServeMux {
 	mux.HandleFunc("GET /v1/err", handlers.HandlerErr)
 
 	mux.HandleFunc("POST /v1/users", apiCfg.HandlerCreateUser)
+	mux.HandleFunc("GET /v1/users", apiCfg.HandlerGetUserByApiKey)
 
 	return mux
 }
