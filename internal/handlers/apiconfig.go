@@ -1,4 +1,4 @@
-package config
+package handlers
 
 import "github.com/NicholasRodrigues/blog-aggregator/internal/database"
 

@@ -2,7 +2,6 @@ package routes
 
 import (
 	"database/sql"
-	"github.com/NicholasRodrigues/blog-aggregator/internal/config"
 	"github.com/NicholasRodrigues/blog-aggregator/internal/database"
 	"github.com/NicholasRodrigues/blog-aggregator/internal/handlers"
 	"net/http"
@@ -20,7 +19,7 @@ func SetRoutes() *http.ServeMux {
 
 	dbQueries := database.New(db)
 
-	apiCfg := config.ApiConfig{
+	apiCfg := handlers.ApiConfig{
 		DB: dbQueries,
 	}
 
@@ -31,6 +30,8 @@ func SetRoutes() *http.ServeMux {
 
 	mux.HandleFunc("GET /v1/readiness", handlers.HandlerReadiness)
 	mux.HandleFunc("GET /v1/err", handlers.HandlerErr)
+
+	mux.HandleFunc("POST /v1/users", apiCfg.HandlerCreateUser)
 
 	return mux
 }
