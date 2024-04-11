@@ -16,7 +16,7 @@ type User struct {
 	Name      string    `json:"name"`
 }
 
-func (apiCfg *ApiConfig) HandlerCreateUser(w http.ResponseWriter, r *http.Request) {
+func (cfg *ApiConfig) HandlerCreateUser(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name string `json:"name"`
 	}
@@ -33,7 +33,7 @@ func (apiCfg *ApiConfig) HandlerCreateUser(w http.ResponseWriter, r *http.Reques
 		UpdatedAt: time.Now(),
 		Name:      params.Name,
 	}
-	userResponse, err := apiCfg.DB.CreateUser(r.Context(), database.CreateUserParams(user))
+	userResponse, err := cfg.DB.CreateUser(r.Context(), database.CreateUserParams(user))
 
 	if err != nil {
 		jsonutil.RespondWithError(w, err, http.StatusInternalServerError, "Internal Server Error")
@@ -43,7 +43,7 @@ func (apiCfg *ApiConfig) HandlerCreateUser(w http.ResponseWriter, r *http.Reques
 	jsonutil.RespondWithJSON(w, http.StatusCreated, userResponse)
 }
 
-func (apiCfg *ApiConfig) HandlerGetUserByApiKey(w http.ResponseWriter, r *http.Request) {
+func (cfg *ApiConfig) HandlerGetUserByApiKey(w http.ResponseWriter, r *http.Request) {
 	apiKey, err := auth.GetApiKey(r.Header)
 	if err != nil {
 		jsonutil.RespondWithError(w, err, http.StatusUnauthorized, "Unauthorized")
@@ -54,7 +54,7 @@ func (apiCfg *ApiConfig) HandlerGetUserByApiKey(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	userResponse, err := apiCfg.DB.GetUserByApiKey(r.Context(), apiKey)
+	userResponse, err := cfg.DB.GetUserByApiKey(r.Context(), apiKey)
 	if err != nil {
 		jsonutil.RespondWithError(w, err, http.StatusNotFound, "User not found")
 		return

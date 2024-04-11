@@ -17,7 +17,7 @@ type Feed struct {
 	UserID    uuid.UUID `json:"user_id"`
 }
 
-func (apiCfg *ApiConfig) HandlerCreateFeed(w http.ResponseWriter, r *http.Request) {
+func (cfg *ApiConfig) HandlerCreateFeed(w http.ResponseWriter, r *http.Request) {
 	type parameters struct {
 		Name string `json:"name"`
 		Url  string `json:"url"`
@@ -41,11 +41,22 @@ func (apiCfg *ApiConfig) HandlerCreateFeed(w http.ResponseWriter, r *http.Reques
 		UserID:    user.ID,
 	}
 
-	feedResponse, err := apiCfg.DB.CreateFeed(r.Context(), database.CreateFeedParams(feed))
+	feedResponse, err := cfg.DB.CreateFeed(r.Context(), database.CreateFeedParams(feed))
 	if err != nil {
 		jsonutil.RespondWithError(w, err, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}
 
 	jsonutil.RespondWithJSON(w, http.StatusCreated, feedResponse)
+}
+
+func (cfg *ApiConfig) HandlerGetFeeds(w http.ResponseWriter, r *http.Request) {
+	feeds, err := cfg.DB.GetFeeds(r.Context())
+
+	if err != nil {
+		jsonutil.RespondWithError(w, err, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+
+	jsonutil.RespondWithJSON(w, http.StatusOK, feeds)
 }

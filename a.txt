@@ -14,4 +14,4 @@ func (cfg *apiConfig) middlewareAuth(handler authedHandler) http.HandlerFunc {
 }
 Copy icon
 USING THE MIDDLEWARE
-v1Router.Get("/users", apiCfg.middlewareAuth(apiCfg.handlerUsersGet))
+v1Router.Get("/users", cfg.middlewareAuth(cfg.handlerUsersGet))

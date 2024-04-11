@@ -35,6 +35,6 @@ func SetRoutes() *http.ServeMux {
 	mux.HandleFunc("GET /v1/users", apiCfg.HandlerGetUserByApiKey)
 
 	mux.Handle("POST /v1/feeds", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.HandlerCreateFeed)))
-
+	mux.HandleFunc("GET /v1/feeds", apiCfg.HandlerGetFeeds)
 	return mux
 }
