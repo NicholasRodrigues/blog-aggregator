@@ -1,2 +1,17 @@
 (base) nicholas@nicholas-System-Product-Name:~$ export PATH=$PATH:$(go env GOPATH)/bin
 (base) nicholas@nicholas-System-Product-Name:~$ export PATH=$PATH:$HOME/go/bin
+
+Most of the endpoints going forward will require a user to be logged in. Let's DRY up our code by creating some middleware that will check for a valid API key.
+
+Now, I'm not a fan of how the Chi router handles stateful middleware using context (middleware that passes data down to the next handler). I prefer to create custom handlers that accept extra values. You can add middleware however you like, but here are some examples from my code.
+
+A CUSTOM TYPE FOR HANDLERS THAT REQUIRE AUTHENTICATION
+type authedHandler func(http.ResponseWriter, *http.Request, database.User)
+Copy icon
+MIDDLEWARE THAT AUTHENTICATES A REQUEST, GETS THE USER AND CALLS THE NEXT AUTHED HANDLER
+func (cfg *apiConfig) middlewareAuth(handler authedHandler) http.HandlerFunc {
+    ///
+}
+Copy icon
+USING THE MIDDLEWARE
+v1Router.Get("/users", apiCfg.middlewareAuth(apiCfg.handlerUsersGet))

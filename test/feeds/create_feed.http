@@ -1,0 +1,8 @@
+POST http://localhost:8080/v1/feeds
+Content-TYpe: application/json
+Authorization: ApiKey 3080f6b73a706ec93f20f9455ccb4b94ee4ee2f0b14d60933ac43b2ae183a6b6
+
+{
+  "name": "medium",
+  "url": "https://medium.com"
+}
