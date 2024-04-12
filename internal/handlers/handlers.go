@@ -1,14 +1,14 @@
 package handlers
 
 import (
-	"context"
 	"github.com/NicholasRodrigues/blog-aggregator/internal/auth"
+	"github.com/NicholasRodrigues/blog-aggregator/internal/database"
 	"net/http"
 )
 
-//type authedHandler func(http.ResponseWriter, *http.Request, database.User)
+type authedHandler func(http.ResponseWriter, *http.Request, database.User)
 
-func (cfg *ApiConfig) AuthMiddleware(next http.Handler) http.Handler {
+func (cfg *ApiConfig) AuthMiddleware(handler authedHandler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		apikey, err := auth.GetApiKey(r.Header)
 		if err != nil {
@@ -24,6 +24,6 @@ func (cfg *ApiConfig) AuthMiddleware(next http.Handler) http.Handler {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
-		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), "user", user)))
+		handler(w, r, user)
 	})
 }

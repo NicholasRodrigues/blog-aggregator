@@ -17,7 +17,7 @@ type Feed struct {
 	UserID    uuid.UUID `json:"user_id"`
 }
 
-func (cfg *ApiConfig) HandlerCreateFeed(w http.ResponseWriter, r *http.Request) {
+func (cfg *ApiConfig) HandlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
 		Url  string `json:"url"`
@@ -28,8 +28,6 @@ func (cfg *ApiConfig) HandlerCreateFeed(w http.ResponseWriter, r *http.Request) 
 		jsonutil.RespondWithError(w, err, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-
-	user := r.Context().Value("user").(database.User)
 
 	feedUuid := uuid.New()
 	feed := Feed{
