@@ -34,7 +34,9 @@ func SetRoutes() *http.ServeMux {
 	mux.HandleFunc("POST /v1/users", apiCfg.HandlerCreateUser)
 	mux.HandleFunc("GET /v1/users", apiCfg.HandlerGetUserByApiKey)
 
-	mux.Handle("POST /v1/feeds", apiCfg.AuthMiddleware(http.HandlerFunc(apiCfg.HandlerCreateFeed)))
+	mux.HandleFunc("POST /v1/feeds", apiCfg.AuthMiddleware(apiCfg.HandlerCreateFeed))
+	mux.HandleFunc("POST /v1/feeds/follow", apiCfg.AuthMiddleware(apiCfg.HandlerFollowFeedCreate))
+	mux.HandleFunc("DELETE /v1/feed_follows/{feedFollowID}", apiCfg.AuthMiddleware(apiCfg.HandlerFollowFeedDelete))
 	mux.HandleFunc("GET /v1/feeds", apiCfg.HandlerGetFeeds)
 	return mux
 }

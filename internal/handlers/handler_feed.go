@@ -8,15 +8,6 @@ import (
 	"time"
 )
 
-type Feed struct {
-	ID        uuid.UUID `json:"id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Name      string    `json:"name"`
-	Url       string    `json:"url"`
-	UserID    uuid.UUID `json:"user_id"`
-}
-
 func (cfg *ApiConfig) HandlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
 	type parameters struct {
 		Name string `json:"name"`
@@ -45,7 +36,26 @@ func (cfg *ApiConfig) HandlerCreateFeed(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	jsonutil.RespondWithJSON(w, http.StatusCreated, feedResponse)
+	feedFollow := Follow{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		FeedID:    feedUuid,
+		UserID:    user.ID,
+		UpdatedAt: time.Now(),
+	}
+	feedFollowResponse, err := cfg.DB.CreateFeedFollows(r.Context(), database.CreateFeedFollowsParams(feedFollow))
+	if err != nil {
+		jsonutil.RespondWithError(w, err, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+
+	jsonutil.RespondWithJSON(w, http.StatusCreated, struct {
+		feed       Feed
+		feedFollow FeedFollow
+	}{
+		feed:       databaseFeedToFeed(feedResponse),
+		feedFollow: databaseFeedFollowToFeedFollow(feedFollowResponse),
+	})
 }
 
 func (cfg *ApiConfig) HandlerGetFeeds(w http.ResponseWriter, r *http.Request) {

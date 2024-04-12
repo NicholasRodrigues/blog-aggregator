@@ -3,11 +3,12 @@
 CREATE TABLE feed_follows
 (
     id         UUID PRIMARY KEY,
-    user_id    UUID REFERENCES users (id),
-    feed_id    UUID REFERENCES feeds (id),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    feed_id UUID NOT NULL REFERENCES feeds(id) ON DELETE CASCADE,
+    UNIQUE (user_id, feed_id)
 );
 
 -- +goose Down
-DROP TABLE users;
+DROP TABLE feed_follows;

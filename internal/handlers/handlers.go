@@ -8,8 +8,8 @@ import (
 
 type authedHandler func(http.ResponseWriter, *http.Request, database.User)
 
-func (cfg *ApiConfig) AuthMiddleware(handler authedHandler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func (cfg *ApiConfig) AuthMiddleware(handler authedHandler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		apikey, err := auth.GetApiKey(r.Header)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -25,5 +25,5 @@ func (cfg *ApiConfig) AuthMiddleware(handler authedHandler) http.Handler {
 			return
 		}
 		handler(w, r, user)
-	})
+	}
 }

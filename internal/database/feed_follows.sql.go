@@ -15,13 +15,13 @@ import (
 const createFeedFollows = `-- name: CreateFeedFollows :one
 INSERT INTO feed_follows (id, feed_id, user_id, created_at, updated_at)
 VALUES ($1, $2, $3, $4, $5)
-RETURNING id, user_id, feed_id, created_at, updated_at
+RETURNING id, created_at, updated_at, user_id, feed_id
 `
 
 type CreateFeedFollowsParams struct {
 	ID        uuid.UUID
-	FeedID    uuid.NullUUID
-	UserID    uuid.NullUUID
+	FeedID    uuid.UUID
+	UserID    uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -37,10 +37,61 @@ func (q *Queries) CreateFeedFollows(ctx context.Context, arg CreateFeedFollowsPa
 	var i FeedFollow
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
-		&i.FeedID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.UserID,
+		&i.FeedID,
 	)
 	return i, err
+}
+
+const deleteFeedFollow = `-- name: DeleteFeedFollow :exec
+
+DELETE FROM feed_follows
+WHERE id = $1 AND user_id = $2
+`
+
+type DeleteFeedFollowParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) DeleteFeedFollow(ctx context.Context, arg DeleteFeedFollowParams) error {
+	_, err := q.db.ExecContext(ctx, deleteFeedFollow, arg.ID, arg.UserID)
+	return err
+}
+
+const getFeedFollowsByUserId = `-- name: GetFeedFollowsByUserId :many
+
+SELECT id, created_at, updated_at, user_id, feed_id FROM feed_follows
+WHERE user_id = $1
+`
+
+func (q *Queries) GetFeedFollowsByUserId(ctx context.Context, userID uuid.UUID) ([]FeedFollow, error) {
+	rows, err := q.db.QueryContext(ctx, getFeedFollowsByUserId, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []FeedFollow
+	for rows.Next() {
+		var i FeedFollow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.UserID,
+			&i.FeedID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
