@@ -1,2 +1,2 @@
-GET http://localhost:8080/v1/users
+DELETE http://localhost:8080/v1/feed_follows/680713c1-dd7d-47ee-8c82-4fb358324e00
 Authorization: ApiKey 651f8750193a52fee10beb66f25f999940c461b3ad404ea586e4065b6023d011

@@ -1,8 +1,8 @@
 POST http://localhost:8080/v1/feeds
 Content-TYpe: application/json
-Authorization: ApiKey 7cd105a684903819d96cdaf9a68416e9ead0bcad041a858452ef5686c03eabfe
+Authorization: ApiKey 651f8750193a52fee10beb66f25f999940c461b3ad404ea586e4065b6023d011
 
 {
-  "name": "medium",
-  "url": "https://medium.com"
+  "name": "yahoo",
+  "url": "https://yahoo.com"
 }

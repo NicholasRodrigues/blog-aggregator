@@ -64,3 +64,13 @@ func (cfg *ApiConfig) HandlerFollowFeedDelete(w http.ResponseWriter, r *http.Req
 
 	jsonutil.RespondWithJSON(w, http.StatusOK, nil)
 }
+
+func (cfg *ApiConfig) HandlerGetFeedFollowsByUserId(w http.ResponseWriter, r *http.Request, user database.User) {
+	feedFollows, err := cfg.DB.GetFeedFollowsByUserId(r.Context(), user.ID)
+	if err != nil {
+		jsonutil.RespondWithError(w, err, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+
+	jsonutil.RespondWithJSON(w, http.StatusOK, feedFollows)
+}
