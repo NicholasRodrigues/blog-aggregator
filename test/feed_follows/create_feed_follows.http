@@ -1,7 +1,7 @@
-POST http://localhost:8080/v1/feed_follows
+POST http://localhost:8080/v1/feeds/follow
 Content-TYpe: application/json
-Authorization: ApiKey 651f8750193a52fee10beb66f25f999940c461b3ad404ea586e4065b6023d011
+Authorization: ApiKey 3d121f67fb7f849cf09d5eb47d6047731c31fd9ffe89e2a82fe5746c9790e33e
 
 {
-  "feed_id": "651f8750193a52fee10beb66f25f999940c461b3ad404ea586e4065b6023d011"
+  "feed_id": "cbea8590-0ab1-4b89-a3a9-d8bdd931bdb9"
 }

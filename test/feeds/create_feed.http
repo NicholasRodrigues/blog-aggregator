@@ -1,8 +1,8 @@
 POST http://localhost:8080/v1/feeds
 Content-TYpe: application/json
-Authorization: ApiKey 651f8750193a52fee10beb66f25f999940c461b3ad404ea586e4065b6023d011
+Authorization: ApiKey 3d121f67fb7f849cf09d5eb47d6047731c31fd9ffe89e2a82fe5746c9790e33e
 
 {
-  "name": "yahoo",
-  "url": "https://yahoo.com"
+  "name": "wagslane.dev",
+  "url": "https://wagslane.dev/index.xml"
 }

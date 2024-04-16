@@ -3,9 +3,12 @@ package http
 import (
 	"fmt"
 	"github.com/NicholasRodrigues/blog-aggregator/internal/middlewares"
+	"github.com/NicholasRodrigues/blog-aggregator/internal/pkg"
 	"github.com/NicholasRodrigues/blog-aggregator/internal/routes"
+	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func StartServer() {
@@ -15,8 +18,14 @@ func StartServer() {
 		port = "8080"
 	}
 
-	mux := routes.SetRoutes()
+	mux, apiConfigPointer := routes.SetRoutes()
 	corsMux := middlewares.MiddlewareCors(mux)
+
+	dbQueries := apiConfigPointer.DB
+	const collectionConcurrency = 10
+	const collectionInterval = time.Minute
+	log.Println("Starting scraping...")
+	go pkg.StartScraping(dbQueries, collectionConcurrency, collectionInterval)
 
 	server := &http.Server{
 		Addr:    ":" + port,
@@ -28,4 +37,5 @@ func StartServer() {
 	if err != nil {
 		fmt.Println("Error starting server: ", err)
 	}
+
 }

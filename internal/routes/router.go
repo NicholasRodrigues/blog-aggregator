@@ -8,13 +8,13 @@ import (
 	"os"
 )
 
-func SetRoutes() *http.ServeMux {
+func SetRoutes() (*http.ServeMux, *handlers.ApiConfig) {
 
 	dbUrl := os.Getenv("DATABASE_URL")
 
 	db, err := sql.Open("postgres", dbUrl)
 	if err != nil {
-		return nil
+		return nil, nil
 	}
 
 	dbQueries := database.New(db)
@@ -22,6 +22,8 @@ func SetRoutes() *http.ServeMux {
 	apiCfg := handlers.ApiConfig{
 		DB: dbQueries,
 	}
+
+	apiCfgPointer := &apiCfg
 
 	const filepathRoot = "."
 	mux := http.NewServeMux()
@@ -39,5 +41,6 @@ func SetRoutes() *http.ServeMux {
 	mux.HandleFunc("DELETE /v1/feed_follows/{feedFollowID}", apiCfg.AuthMiddleware(apiCfg.HandlerFollowFeedDelete))
 	mux.HandleFunc("GET /v1/feed_follows", apiCfg.AuthMiddleware(apiCfg.HandlerGetFeedFollowsByUserId))
 	mux.HandleFunc("GET /v1/feeds", apiCfg.HandlerGetFeeds)
-	return mux
+
+	return mux, apiCfgPointer
 }
