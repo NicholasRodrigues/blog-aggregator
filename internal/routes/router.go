@@ -42,5 +42,7 @@ func SetRoutes() (*http.ServeMux, *handlers.ApiConfig) {
 	mux.HandleFunc("GET /v1/feed_follows", apiCfg.AuthMiddleware(apiCfg.HandlerGetFeedFollowsByUserId))
 	mux.HandleFunc("GET /v1/feeds", apiCfg.HandlerGetFeeds)
 
+	mux.HandleFunc("GET /v1/posts", apiCfg.AuthMiddleware(apiCfg.HandlerGetPostFromUser))
+
 	return mux, apiCfgPointer
 }

@@ -1,0 +1,2 @@
+GET http://localhost:8080/v1/posts
+Authorization: ApiKey 3d121f67fb7f849cf09d5eb47d6047731c31fd9ffe89e2a82fe5746c9790e33e
