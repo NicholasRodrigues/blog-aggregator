@@ -2,11 +2,14 @@ package pkg
 
 import (
 	"context"
+	"database/sql"
 	"encoding/xml"
 	"github.com/NicholasRodrigues/blog-aggregator/internal/database"
+	"github.com/google/uuid"
 	"io"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 )
@@ -46,7 +49,33 @@ func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
 		return
 	}
 	for _, item := range feedData.Channel.Item {
-		log.Println("Found post", item.Title)
+		publishedAt := sql.NullTime{}
+		if t, err := time.Parse(time.RFC1123Z, item.PubDate); err == nil {
+			publishedAt = sql.NullTime{
+				Time:  t,
+				Valid: true,
+			}
+		}
+		post := database.Post{
+			ID:    uuid.New(),
+			Title: item.Title,
+			Description: sql.NullString{
+				String: item.Description,
+				Valid:  true,
+			},
+			PublishedAt: publishedAt,
+			FeedID:      feed.ID,
+			UpdatedAt:   time.Now(),
+			CreatedAt:   time.Now(),
+		}
+		_, err := db.CreatePost(context.Background(), database.CreatePostParams(post))
+		if err != nil {
+			if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+				continue
+			}
+			log.Printf("Couldn't create post: %v", err)
+			continue
+		}
 	}
 	log.Printf("Feed %s collected, %v posts found", feed.Name, len(feedData.Channel.Item))
 }
